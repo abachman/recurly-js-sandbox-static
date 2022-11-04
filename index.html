@@ -5,10 +5,11 @@
   <link href="https://js.recurly.com/v4/recurly.css" rel="stylesheet" type="text/css" /> -->
   <style>
     body {
-      margin: 0;
+      margin: 10px 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-family: Helvetica, sans-serif;
     }
 
     .wrapper {
@@ -26,31 +27,53 @@
       color: darkred;
     }
 
-    .api input {
-      width: 230px;
+    .api-form {
+      display: grid;
+      grid: auto-flow / 1fr 1fr;
+      width: 480px;
+      gap: 18px;
+    }
+
+    .api-form input {
+      width: 100%;
+      border: 1px solid #333;
+      margin-top: 8px;
+      padding: 4px;
+    }
+
+    .api-form label {
+      display: block;
+      width: 240px;
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
     <div class="panel api">
-      <strong>API</strong><br />
-      <input
-        type="text"
-        name="api_url"
-        title="API URL"
-        id="api_url"
-        placeholder="https://js.recurly.com/v4/"
-      />
-      <input
-        type="text"
-        name="api_key"
-        title="API Key"
-        id="api_key"
-        placeholder="Public Key"
-        disabled
-      />
-      <span id="api_status"></span>
+      <form action="#" onsubmit="return false;" class="api-form">
+        <label>
+          API Url<br />
+          <input
+            type="text"
+            name="api_url"
+            title="API URL"
+            id="api_url"
+            placeholder="https://js.recurly.com/v4/"
+          />
+        </label>
+        <label>
+          API Key<br />
+          <input
+            type="text"
+            name="api_key"
+            title="API Key"
+            id="api_key"
+            placeholder="Public Key"
+            disabled
+          />
+        </label>
+      </form>
+      <p id="api_status"></p>
     </div>
     <script src="dynamic-api.js"></script>
 
@@ -160,7 +183,8 @@
               `;
             } else {
               results.innerHTML = `
-              <p>Success! Got token: ${token}</p>
+              <p>Success! Got token:</p>
+              <pre>${JSON.stringify(token, null, "  ")}</pre>
               `;
               // normally, this would be where the token gets sent to an
               // internal (merchant) API, and subsequently to recurly via

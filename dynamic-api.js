@@ -16,7 +16,7 @@ $("#api_url").addEventListener("change", (evt) => {
     head.appendChild(scriptTag);
     scriptTag.onload = () => {
       $("#api_url").disabled = true;
-      $("#api_status").innerHTML = "script ready!";
+      $("#api_status").innerHTML = "script loaded";
     };
     scriptTag.src = uri.toString() + "/recurly.js";
 
@@ -27,9 +27,13 @@ $("#api_url").addEventListener("change", (evt) => {
     head.appendChild(styleTag);
 
     $("#api_key").disabled = false;
+
+    evt.target.classList.remove("error");
   } catch (ex) {
     evt.target.classList.add("error");
-    console.error("failed to set URL", ex.message);
+    const msg = `failed to set URL: ${ex.message}`;
+    console.error(msg);
+    $("#api_status").innerHTML = msg;
   }
 });
 
