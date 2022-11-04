@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<head>
+  <script src="config.js"></script>
+  <!-- <script src="https://js.recurly.com/v4/recurly.js"></script>
+  <link href="https://js.recurly.com/v4/recurly.css" rel="stylesheet" type="text/css" /> -->
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wrapper {
+      width: 1024px;
+    }
+
+    .panel {
+      margin: 0 0 16px;
+      padding: 12px 16px;
+      border: 1px solid black;
+    }
+
+    .error {
+      border: 1px solid darkred;
+      color: darkred;
+    }
+
+    .api input {
+      width: 230px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="panel api">
+      <strong>API</strong><br />
+      <input
+        type="text"
+        name="api_url"
+        title="API URL"
+        id="api_url"
+        placeholder="https://js.recurly.com/v4/"
+      />
+      <input
+        type="text"
+        name="api_key"
+        title="API Key"
+        id="api_key"
+        placeholder="Public Key"
+        disabled
+      />
+      <span id="api_status"></span>
+    </div>
+    <script src="dynamic-api.js"></script>
+
+    <div id="form-holder" class="panel"></div>
+
+    <div id="results" class="panel"></div>
+
+    <button id="insert-button" onclick="insertForm()" disabled>
+      INSERT FORM
+    </button>
+    <button id="remove-button" onclick="removeForm()" style="display: none">
+      REMOVE FORM
+    </button>
+  </div>
+
+  <script>
+    // debug all recurly.js messages
+    localStorage.debug = "*";
+
+    function removeForm() {
+      document.querySelector("#form-holder form").remove();
+      [...document.querySelectorAll("iframe")].forEach((iframe) =>
+        iframe.remove()
+      );
+
+      document.querySelector("#insert-button").style = "display: block;";
+      document.querySelector("#remove-button").style = "display: none;";
+      document.querySelector("#results").innerHTML = "";
+    }
+
+    const FORM = `
+      <form onsubmit="event.preventDefault(); return false">
+        <p>Payment Form</p>
+        <p>
+          <label>First Name</label>
+          <input type="text" data-recurly="first_name" placeholder="First" />
+        </p>
+        <p>
+          <label>Last Name</label>
+          <input type="text" data-recurly="last_name" placeholder="Last" />
+        </p>
+        <p>
+          <label>Address1</label>
+          <input type="text" data-recurly="address1" placeholder="Street Address" />
+        </p>
+        <p>
+          <label>City</label>
+          <input type="text" data-recurly="city" placeholder="City" />
+        </p>
+        <p>
+          <label>State</label>
+          <input type="text" data-recurly="state" placeholder="Country" />
+        </p>
+        <p>
+          <label>Country</label>
+          <input type="text" data-recurly="country" placeholder="Country" />
+        </p>
+        <p>
+          <label>Postal Code</label>
+          <input type="text" data-recurly="postal_code" placeholder="Zip" />
+        </p>
+
+        <div id="recurly-elements">
+          <!-- Recurly Elements will be attached here -->
+        </div>
+
+        <!-- Recurly.js will update this field automatically -->
+        <input type="hidden" name="recurly-token" data-recurly="token" />
+
+        <br />
+        <button>submit</button>
+      </form>
+    `;
+
+    function insertForm() {
+      document.querySelector("#form-holder").innerHTML = FORM;
+
+      window.recurly.on("error", (name, ...stuff) => {
+        console.error("ERROR", name);
+        console.error(stuff);
+      });
+      window.recurly.configure({
+        publicKey: window.recurlyConfig.publicKey,
+        fraud: {
+          kount: {
+            dataCollector: true,
+            form: document.querySelector("#form-holder form"),
+          },
+        },
+      });
+      const elements = recurly.Elements();
+      const cardElement = elements.CardElement();
+      cardElement.attach("#recurly-elements");
+
+      const results = document.querySelector("#results");
+
+      document
+        .querySelector("#form-holder form")
+        .addEventListener("submit", function (event) {
+          const form = this;
+          event.preventDefault();
+          recurly.token(elements, form, function (err, token) {
+            if (err) {
+              results.innerHTML = `
+              <p><strong>ERROR</strong></p>
+              <pre>${JSON.stringify(err, null, "  ")}</pre>
+              `;
+            } else {
+              results.innerHTML = `
+              <p>Success! Got token: ${token}</p>
+              `;
+              // normally, this would be where the token gets sent to an
+              // internal (merchant) API, and subsequently to recurly via
+              // server-side API calls.
+            }
+          });
+        });
+
+      document.querySelector("#insert-button").style = "display: none;";
+      document.querySelector("#remove-button").style = "display: block;";
+    }
+  </script>
+</body>
