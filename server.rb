@@ -8,8 +8,10 @@ set :allow_headers, "content-type"
 set :expose_headers, "content-type"
 set :default_content_type, "application/json"
 
+HAS_PRIVATE_KEY = !ENV['RECURLY_PRIVATE_KEY'].nil?
+
 get '/' do
-  'POST /purchase { token: {} }'
+  "POST /purchase { token: {} }\nHAS_PRIVATE_KEY=#{HAS_PRIVATE_KEY.inspect}"
 end
 
 post '/purchase' do
@@ -18,10 +20,10 @@ post '/purchase' do
 
   if payload['token']
     status 200
-    body JSON.generate({ accept: true })
+    body JSON.generate({ accept: true, HAS_PRIVATE_KEY: HAS_PRIVATE_KEY })
   else
     status 400
-    body JSON.generate({ accept: false })
+    body JSON.generate({ accept: false, HAS_PRIVATE_KEY: HAS_PRIVATE_KEY })
   end
 end
 

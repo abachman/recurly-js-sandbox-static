@@ -4,11 +4,13 @@ FROM ruby:3.1.2
 
 ARG RECURLY_PRIVATE_KEY
 
+ENV RECURLY_PRIVATE_KEY=$RECURLY_PRIVATE_KEY
+ENV PORT=4567
+
 WORKDIR /app
 COPY . /app
 RUN bundle install
 
-EXPOSE 4567
+EXPOSE $PORT
 
-CMD ["bundle", "exec", "rackup", "--host", "0.0.0.0", "-p", "4567"]
-
+CMD bundle exec rackup --host 0.0.0.0 -p $PORT
