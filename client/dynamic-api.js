@@ -11,7 +11,6 @@ $("#api_url").addEventListener("change", (evt) => {
     console.log({ API_URL, uri });
 
     const head = $("head");
-
     const scriptTag = document.createElement("script");
     head.appendChild(scriptTag);
     scriptTag.onload = () => {
@@ -29,6 +28,8 @@ $("#api_url").addEventListener("change", (evt) => {
     $("#api_key").disabled = false;
 
     evt.target.classList.remove("error");
+
+    localStorage.setItem("recurly_api_uri", API_URL);
   } catch (ex) {
     evt.target.classList.add("error");
     const msg = `failed to set URL: ${ex.message}`;
@@ -41,5 +42,10 @@ $("#api_key").addEventListener("change", (evt) => {
   const key = evt.target.value.trim();
   console.log("set public key to", key);
   window.recurlyConfig.publicKey = key;
+  localStorage.setItem("recurly_api_key", key);
   $("#insert-button").disabled = false;
 });
+
+if (window.recurlyConfig.publicKey) {
+  $("#api_key").style.display = "none";
+}

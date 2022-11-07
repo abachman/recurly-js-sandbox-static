@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <head>
   <script src="config.js"></script>
-  <!-- <script src="https://js.recurly.com/v4/recurly.js"></script>
-  <link href="https://js.recurly.com/v4/recurly.css" rel="stylesheet" type="text/css" /> -->
+  <script src="https://js.recurly.com/v4/recurly.js"></script>
+  <link
+    href="https://js.recurly.com/v4/recurly.css"
+    rel="stylesheet"
+    type="text/css"
+  />
   <style>
     body {
       margin: 10px 0;
@@ -58,7 +62,7 @@
             name="api_url"
             title="API URL"
             id="api_url"
-            placeholder="https://js.recurly.com/v4/"
+            value="https://js.recurly.com/v4/"
           />
         </label>
         <label>
@@ -69,7 +73,6 @@
             title="API Key"
             id="api_key"
             placeholder="Public Key"
-            disabled
           />
         </label>
       </form>
@@ -81,9 +84,7 @@
 
     <div id="results" class="panel"></div>
 
-    <button id="insert-button" onclick="insertForm()" disabled>
-      INSERT FORM
-    </button>
+    <button id="insert-button" onclick="insertForm()">INSERT FORM</button>
     <button id="remove-button" onclick="removeForm()" style="display: none">
       REMOVE FORM
     </button>
