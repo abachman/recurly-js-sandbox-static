@@ -170,6 +170,7 @@
       cardElement.attach("#recurly-elements");
 
       const results = document.querySelector("#results");
+      results.innerHTML = "";
 
       document
         .querySelector("#form-holder form")
@@ -186,10 +187,30 @@
               results.innerHTML = `
               <p>Success! Got token:</p>
               <pre>${JSON.stringify(token, null, "  ")}</pre>
+              <p>/purchase response:</p>
               `;
-              // normally, this would be where the token gets sent to an
-              // internal (merchant) API, and subsequently to recurly via
-              // server-side API calls.
+
+              fetch(window.recurlyConfig.purchaseUrl, {
+                method: "POST",
+                body: JSON.stringify({ token }),
+                headers: {
+                  "Content-type": "application/json",
+                },
+              })
+                .then((response) => {
+                  return response.json();
+                })
+                .then((data) => {
+                  const message = document.createElement("pre");
+                  message.innerHTML = JSON.stringify(data, null, "  ");
+                  results.appendChild(message);
+                })
+                .catch((err) => {
+                  const message = document.createElement("pre");
+                  console.error(err);
+                  message.innerHTML = err.toString();
+                  results.appendChild(message);
+                });
             }
           });
         });
