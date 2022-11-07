@@ -1,6 +1,24 @@
-## Running locally
+## Running static client site locally
 
-run as a docker image:
+This is a single page purchase form demonstrating Recurly.js w/ fraud detection enabled
+
+Update `client/config.js` to point at localhost:
+
+```js
+window.recurlyConfig.purchaseUrl = "http://localhost:4567/purchase";
+```
+
+Run with `npx serve`:
+
+```sh
+$ npx serve client/
+```
+
+## Running /purchase API locally
+
+This is a tiny [Sinatra + Recurly](https://sinatrarb.com/) merchant application that accepts a payment token and creates an invoice.
+
+Run as a docker image:
 
 ```sh
 $ docker build --tag rjs-static .
